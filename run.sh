@@ -23,7 +23,7 @@ peer_generation () {
 cat << EOF
 [Peer]
 PublicKey = $(peer_keygen)
-PresharedKey = /UwcSPg38hW/D9Y3tcS1FOV0K1wuURMbS0sesJEP5ak=
+PresharedKey = 
 AllowedIPs = 0.0.0.0/0
 Endpoint = demo.wireguard.com:51820
 
@@ -32,7 +32,7 @@ EOF
 }
 
 confgen () {
-cat << EOF > 2.conf
+cat << EOF > wg0.conf
 [Interface]
 Address = 10.10.10.1/24
 PrivateKey = $(server_keygen)
