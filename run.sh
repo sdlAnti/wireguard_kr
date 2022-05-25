@@ -48,10 +48,10 @@ AllowedIPs = 0.0.0.0/0
 Endpoint = test.tld:51820
 
 EOF
-
-cat << EOF > peers/peer"$n"/peer"$n"_wg.conf
+peer_path=peers/peer"$n"
+cat << EOF > $peer_path/peer"$n"_wg.conf
 [Interface]
-PrivateKey = $(cat peers/peer"$n"/peer"$n"_private_key)
+PrivateKey = $(cat "$peer_path"/peer"$n"_private_key)
 Address = 10.10.10.$((1+$n))/32
 DNS = $peer_dns
 
@@ -61,6 +61,13 @@ Endpoint = $server_ip:51820
 AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 20
 EOF
+
+if qrencode --version &> /dev/null
+    then
+        qrencode -t png -o "$peer_path"/peer"$n"_qr.png -r "$peer_path"/peer"$n"_wg.conf
+    else
+        exit 1
+fi
 
 (( n++ ))
 done
