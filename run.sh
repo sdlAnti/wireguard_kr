@@ -1,7 +1,9 @@
 #!/bin/bash -x
+#ENV section
 n=1
 peers=5
 peer_dns=77.88.8.8
+qr_enable=1
 server_keygen () {
     if [ -e server_private_key ]
         then
@@ -43,9 +45,7 @@ cat << EOF
 [Peer]
 #Peer$n
 PublicKey = $(peer_keygen)
-PresharedKey =
-AllowedIPs = 0.0.0.0/0
-Endpoint = test.tld:51820
+AllowedIPs = 10.10.10.$((1+$n))/32
 
 EOF
 peer_path=peers/peer"$n"
@@ -62,10 +62,11 @@ AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 20
 EOF
 
-if qrencode --version &> /dev/null
+if [ $qr_enable -eq 1 ] && qrencode --version &> /dev/null
     then
         qrencode -t png -o "$peer_path"/peer"$n"_qr.png -r "$peer_path"/peer"$n"_wg.conf
     else
+        echo "qrencode not installed" 
         exit 1
 fi
 
@@ -74,7 +75,7 @@ done
 }
 
 confgen () {
-server_ip=`curl -s zx2c4.com/ip | head -1`
+server_ip=`curl ifconfig.me`
 cat << EOF > wg0.conf
 [Interface]
 Address = 10.10.10.1/24
