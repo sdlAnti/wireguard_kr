@@ -1,9 +1,10 @@
-#!/bin/bash -x
+#!/bin/bash
 #ENV section
 n=1
 peers=5
 peer_dns=77.88.8.8
 qr_enable=1
+cd /etc/wireguard
 server_keygen () {
     if [ -e server_private_key ]
         then
@@ -39,17 +40,17 @@ fi
 }
 
 peer_generation () {
-while [ $n -le $peers ]
-do
-cat << EOF
+    while [ $n -le $peers ]
+    do
+        cat << EOF
 [Peer]
 #Peer$n
 PublicKey = $(peer_keygen)
 AllowedIPs = 10.10.10.$((1+$n))/32
 
 EOF
-peer_path=peers/peer"$n"
-cat << EOF > $peer_path/peer"$n"_wg.conf
+        peer_path=peers/peer"$n"
+        cat << EOF > $peer_path/peer"$n"_wg.conf
 [Interface]
 PrivateKey = $(cat "$peer_path"/peer"$n"_private_key)
 Address = 10.10.10.$((1+$n))/32
@@ -62,21 +63,21 @@ AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 20
 EOF
 
-if [ $qr_enable -eq 1 ] && qrencode --version &> /dev/null
-    then
-        qrencode -t png -o "$peer_path"/peer"$n"_qr.png -r "$peer_path"/peer"$n"_wg.conf
-    else
-        echo "qrencode not installed" 
-        exit 1
-fi
+        if [ $qr_enable -eq 1 ] && qrencode --version &> /dev/null
+            then
+                qrencode -t png -o "$peer_path"/peer"$n"_qr.png -r "$peer_path"/peer"$n"_wg.conf
+            else
+                echo "qrencode not installed" 
+                exit 1
+        fi
 
-(( n++ ))
-done
+        (( n++ ))
+    done
 }
 
 confgen () {
-server_ip=`curl ifconfig.me`
-cat << EOF > wg0.conf
+    server_ip=`curl ifconfig.me`
+    cat << EOF > wg0.conf
 [Interface]
 Address = 10.10.10.1/24
 ListenPort = 51820
@@ -91,10 +92,10 @@ EOF
 }
 
 
-#if [ -e wg0.conf ]
-#    then
-#        echo conf file is exist
-#    else
-#        echo generating wireguard server and client conf
+if [ -e wg0.conf ]
+    then
+        echo conf file is exist
+    else
+        echo generating wireguard server and client conf
         confgen
-#fi
+fi
