@@ -1,15 +1,13 @@
 #!/bin/bash -x
-PEERS=20
+PEERS=7
 qr_enable=0
 server_ip=`curl ifconfig.me`
 peer_dns=77.88.8.8
 
 peer_generation () {
-    peer_keygen
     peer_path=peers/peer_"$n"
+    peer_keygen    
     peer_ip=10.10.10.$(( `cat peer_ip.list | cut -f 4 -d '.' | tail -1` + 1 ))
-    echo "$peer_path"/peer_"$n"_wg.conf
-    echo pwd = $PWD
 
     cat << EOF > $peer_path/peer_"$n"_wg.conf
 [Interface]
@@ -29,7 +27,6 @@ EOF
         (( n++ ))
 }
 peer_keygen () {
-peer_path=peers/peer_"$n"
 if [ -d $peer_path ]
     then
         if [ -e "$peer_path"/peer_"$n"_private_key ]
@@ -73,12 +70,11 @@ if [ $PEERS ]
     else
         PEERNAME=$1
         n=$1
-        peer_generation
-        echo $PEERNAME
         if [ ! $PEERNAME  ]
             then
                 echo "Peer name is empty"
                 echo "For generate PEER: addpeer.sh <peername>"
                 exit 0
         fi 
+        peer_generation
 fi
