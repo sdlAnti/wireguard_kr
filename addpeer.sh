@@ -1,25 +1,21 @@
-#!/bin/bash -x
-#PEERS=2
-#qr_enable=0
+#!/bin/bash
 server_ip=$(curl ifconfig.me)
-peer_dns=77.88.8.8
 wg_path=/etc/wireguard
 
 peer_generation () {
     peer_path="$wg_path"/peers/peer_"$n"
     peer_keygen    
     peer_ip=10.10.10.$(( `cat peer_ip.list | cut -f 4 -d '.' | tail -1` + 1 ))
-    echo 1 pwd 
 
     cat << EOF > "$peer_path"/peer_"$n"_wg.conf
 [Interface]
 PrivateKey = $(cat "$peer_path"/peer_"$n"_private_key)
 Address = $peer_ip/32
-DNS = $peer_dns
+DNS = $DNS
 
 [Peer]
 PublicKey = $(cat "$wg_path"/server_public_key)
-Endpoint = $server_ip:51820
+Endpoint = $server_ip:"$PORT"
 AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 20
 EOF

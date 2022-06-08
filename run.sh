@@ -1,5 +1,4 @@
-#!/bin/bash -x
-#ENV section
+#!/bin/bash
 
 wg_path=/etc/wireguard
 
@@ -19,7 +18,7 @@ confgen () {
     cat << EOF > "$wg_path"/wg0.conf
 [Interface]
 Address = 10.10.10.1/24
-ListenPort = 51820
+ListenPort = "$PORT"
 PrivateKey = $(server_keygen)
 
 `echo 'PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE'`
@@ -54,7 +53,7 @@ if [ ! -e "$wg_path"/wg0.conf ]
     then
         echo generating wireguard server and client conf
         confgen
-        addpeer.sh test
+        addpeer.sh user
 fi
 
 start_server

@@ -17,8 +17,9 @@ RUN echo 'deb http://deb.debian.org/debian buster-backports main' >> /etc/apt/so
 	/var/tmp/*
 
 #qr code generation
-ENV QR_ENABLE=1    
+ENV QR_ENABLE=0   
 ENV DNS=77.88.8.8
+ENV PORT=51820
 
 
 WORKDIR /wireguard
