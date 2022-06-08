@@ -1,26 +1,22 @@
 #!/bin/bash -x
 #ENV section
-n=1
-peers=5
-peer_dns=77.88.8.8
-qr_enable=1
 
-#cd /etc/wireguard
+wg_path=/etc/wireguard
 
 server_keygen () {
     if [ -e server_private_key ]
         then
-            cat server_private_key
+            cat "$wg_path"/server_private_key
         else
-            wg genkey | tee server_private_key | wg pubkey > server_public_key
-            chmod 600 server_private_key
-            cat server_private_key
+            wg genkey | tee "$wg_path"/server_private_key | wg pubkey > "$wg_path"/server_public_key
+            chmod 600 "$wg_path"/server_private_key
+            cat "$wg_path"/server_private_key
     fi
 }
 
 confgen () {
     server_ip=`curl ifconfig.me`
-    cat << EOF > wg0.conf
+    cat << EOF > "$wg_path"/wg0.conf
 [Interface]
 Address = 10.10.10.1/24
 ListenPort = 51820
@@ -33,19 +29,38 @@ EOF
 }
 
 start_server () {
-    for files in /home/sd--anti/wireguard/wg*.conf
+    for files in "$wg_path"/wg*.conf
 	do
         echo "$(date): start interface - $files"
-        echo "wg-quick up $files"
+        wg-quick up $files       
+    done
+    for files in "$wg_path"/peers/peer_*/*public_key
+    do
+        PUBKEY=$(cat $files)
+        AIP=$(cat $(echo $files | sed 's/public_key/wg.conf/') | sed -n '3 s/Address = //p')
+        wg set wg0 peer $PUBKEY allowed-ips $AIP
     done
 }
 
-if [ -e wg0.conf ]
+stop_server () {
+    for files in "$wg_path"/wg*.conf
+	do
+        echo "$(date): stop interface - $files"
+        wg-quick down $files
+    done
+}
+
+if [ ! -e "$wg_path"/wg0.conf ]
     then
-        echo conf file is exist, wireguard ready to start.
-        exit 0
-    else
         echo generating wireguard server and client conf
         confgen
         addpeer.sh test
 fi
+
+start_server
+
+while inotifywait -e modify -e create /etc/wireguard/peers
+do
+	stop_server
+	start_server
+done

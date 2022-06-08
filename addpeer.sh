@@ -1,22 +1,24 @@
 #!/bin/bash -x
-PEERS=7
-qr_enable=0
-server_ip=`curl ifconfig.me`
+#PEERS=2
+#qr_enable=0
+server_ip=$(curl ifconfig.me)
 peer_dns=77.88.8.8
+wg_path=/etc/wireguard
 
 peer_generation () {
-    peer_path=peers/peer_"$n"
+    peer_path="$wg_path"/peers/peer_"$n"
     peer_keygen    
     peer_ip=10.10.10.$(( `cat peer_ip.list | cut -f 4 -d '.' | tail -1` + 1 ))
+    echo 1 pwd 
 
-    cat << EOF > $peer_path/peer_"$n"_wg.conf
+    cat << EOF > "$peer_path"/peer_"$n"_wg.conf
 [Interface]
 PrivateKey = $(cat "$peer_path"/peer_"$n"_private_key)
 Address = $peer_ip/32
 DNS = $peer_dns
 
 [Peer]
-PublicKey = $(cat server_public_key)
+PublicKey = $(cat "$wg_path"/server_public_key)
 Endpoint = $server_ip:51820
 AllowedIPs = 0.0.0.0/0
 PersistentKeepalive = 20
@@ -46,10 +48,10 @@ if [ -d $peer_path ]
 fi
 }
 qr_generation () {    
-    if [ $qr_enable -eq 0 ]
+    if [ $QR_ENABLE -eq 0 ]
         then
             return 
-    elif [ $qr_enable -eq 1 ] && qrencode --version &> /dev/null
+    elif [ $QR_ENABLE -eq 1 ] && qrencode --version &> /dev/null
         then
             qrencode -t png -o "$peer_path"/peer_"$n"_qr.png -r "$peer_path"/peer_"$n"_wg.conf
             qrencode -t ansiutf8 < "$peer_path"/peer_"$n"_wg.conf
