@@ -65,7 +65,7 @@ fi
 start_server
 
 # restart wireguard if peers config modify or new peer was created
-while inotifywait -e modify -e create /etc/wireguard/peers
+while inotifywait -e modify -e create -e delete /etc/wireguard/peers
 do
 	stop_server
 	start_server
