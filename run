@@ -27,6 +27,7 @@ PrivateKey = $(server_keygen)
 `echo 'PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE'`
 
 EOF
+chmod 600 "$wg_path"/wg0.conf
 }
 
 #wireguard interface up
@@ -58,7 +59,7 @@ if [ ! -e "$wg_path"/wg0.conf ]
     then
         echo generating wireguard server and client conf
         confgen
-        addpeer.sh user
+        addpeer user
 fi
 
 start_server

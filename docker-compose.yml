@@ -1,18 +1,17 @@
-version: '3.8'
+version: '3'
 services:
-  wireguard:
-    build: .
-    image: wga1
+  wireguard_kr:
+    image: sdlanti/wireguard_kr
+    container_name: wireguard_kr
+    environment:
+      - PORT=51820
+      - DNS=77.88.8.8, 8.8.8.8
+      - QR_ENABLE=1
     volumes:
-      - /home/sd--anti/wireguard/123:/etc/wireguard/
-    restart: allways
+      - ~/wireguard/:/etc/wireguard/
+    restart: always
     ports:
       - 51820:51820/udp
-    environment:
-      - QR_ENABLE=1
-      - PORT=51820
-      - DNS="77.88.8.8, 8.8.8.8"
-    
     cap_add:
       - SYS_MODULE
       - NET_ADMIN
