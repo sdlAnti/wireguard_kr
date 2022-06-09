@@ -7,7 +7,7 @@ LABEL   version="1.0" \
 ENV QR_ENABLE=0
 
 #DNS servers
-ENV DNS=77.88.8.8, 8.8.8.8
+ENV DNS=77.88.8.8
 
 #wireguard default port
 ENV PORT=51820

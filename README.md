@@ -41,7 +41,7 @@ services:
     image: sdlanti/wireguard_kr
     environment:
       - PORT=51820
-      - DNS=77.88.8.8, 8.8.8.8
+      - DNS=77.88.8.8
       - QR_ENABLE=1
     volumes:
       - ~/wireguard/:/etc/wireguard/
@@ -60,9 +60,9 @@ all keys and config files will bee save to *~/wireguard/*
 
 ## How to use
 ### Environments 
-One or two DNS servers for peers
+DNS server for peers
 ```
-DNS=77.88.8.8, 8.8.8.8
+DNS=77.88.8.8
 ```
 Generate QR code to *~/wireguard/peers/PEERNAME/PEERNAME_qr.png* and print to console 
 ```
