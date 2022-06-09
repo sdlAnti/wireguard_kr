@@ -1,5 +1,4 @@
-#!/bin/bash -x
-#PEERS=2
+#!/bin/bash
 server_ip=$(curl ifconfig.me)
 peer_dns=$DNS
 wg_path=/etc/wireguard
@@ -8,7 +7,6 @@ peer_generation () {
     peer_path="$wg_path"/peers/peer_"$n"
     peer_keygen    
     peer_ip=10.10.10.$(( `cat peer_ip.list | cut -f 4 -d '.' | tail -1` + 1 ))
-    echo 1 pwd 
 
     cat << EOF > "$peer_path"/peer_"$n"_wg.conf
 [Interface]
