@@ -1,7 +1,7 @@
 # Wireguard for Docker
 Very simple [Wireguard®](https://www.wireguard.com/) server in a docker container
 
-### Upstream links
+### Upstream links 🐌
 GitHub: [sdlAnti/wireguard_kr](https://github.com/sdlAnti/wireguard_kr)  
 Docker Repo: [sdlanti/wireguard_kr](https://hub.docker.com/r/sdlanti/wireguard_kr)  
 
